@@ -34,26 +34,26 @@ It supports the SARIF format, which is the output format for static analysis. Th
 ## Main Tool features:
 - **id collision detection**
  	- Environment variable names collision
- 	- docs : https://sisakulint.github.io/docs/idrule/
+ 	- docs : https://sisaku-security.github.io/sisakulint/docs/idrule/
  	- github ref https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#using-a-specific-shell
 
 - **Hardcoded credentials detection by rego query language**
- 	- docs : https://sisakulint.github.io/docs/credentialsrule/
+ 	- docs : https://sisaku-security.github.io/sisakulint/docs/credentialsrule/
 
 - **commit-sha rule**
- 	- docs : https://sisakulint.github.io/docs/commitsharule/
+ 	- docs : https://sisaku-security.github.io/sisakulint/docs/commitsharule/
  	- github ref https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#using-third-party-actions
 
 - **premissions rule**
- 	- docs : https://sisakulint.github.io/docs/permissions/
+ 	- docs : https://sisaku-security.github.io/sisakulint/docs/permissions/
  	- github ref : https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#permissions
 
 - **workflow call rule**
-  - docs : https://sisakulint.github.io/docs/workflowcall/
+  - docs : https://sisaku-security.github.io/sisakulint/docs/workflowcall/
   - github ref : https://docs.github.com/en/actions/sharing-automations/reusing-workflows
 
 - **timeout-minutes-rule**
-  - docs : https://sisakulint.github.io/docs/timeoutminutesrule/
+  - docs : https://sisaku-security.github.io/sisakulint/docs/timeoutminutesrule/
   - github ref : https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes
   - github ref : https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes
 
@@ -67,7 +67,7 @@ $ brew install sisakulint
 ## install from release page for Linux user
 
 visit release page of this repository and download for yours.
-https://github.com/ultra-supara/sisakulint/releases
+https://github.com/sisaku-security/sisakulint/releases
 
 ```bash
 $ cd < dir >

@@ -1,11 +1,11 @@
-baseURL = 'https://sisakulint.github.io'
+baseURL = 'https://sisaku-security.github.io/sisakulint/'
 languageCode = 'en-us'
 title = 'sisakulint Document'
 publishDir = './public'
 enableGitInfo = true
 
 [param]
-BookRepo = 'https://sisakulint.github.io'
+BookRepo = 'https://github.com/sisaku-security/sisakulint'
 
 [module]
 [[module.imports]]
