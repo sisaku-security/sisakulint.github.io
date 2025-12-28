@@ -61,7 +61,7 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 ## Contact Us
 
 If you have any questions about this Privacy Policy, please:
-- Open an issue at [https://github.com/sisaku-security/sisakulint-agent/issues](https://github.com/sisaku-security/sisakulint-agent/issues)
+- Open an issue at [https://github.com/ultra-supara/sisakulint/issues](https://github.com/ultra-supara/sisakulint/issues)
 - Or contact the maintainers through the repository
 
 ## Open Source
