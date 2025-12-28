@@ -1,12 +1,12 @@
 +++
 title = 'Privacy Policy'
-date = 2024-12-28
+date = 2025-12-28
 weight = 1
 +++
 
 # Privacy Policy
 
-**Last Updated: December 28, 2024**
+**Last Updated: December 28, 2025**
 
 This Privacy Policy describes how sisakulint-agent ("we", "us", or "our") collects, uses, and shares information when you use our GitHub App.
 
@@ -18,7 +18,7 @@ When you install sisakulint-agent on your GitHub repository, we access the follo
 - **Pull request metadata**: We access pull request information to post review comments
 - **Issue comments**: We read and write issue comments to provide autofix functionality
 
-### Data We Do NOT Collect
+### Users Data We Do NOT Collect
 - We do **not** collect or store your source code beyond workflow files
 - We do **not** collect personal information such as email addresses or names
 - We do **not** store any repository data permanently
@@ -67,4 +67,4 @@ If you have any questions about this Privacy Policy, please:
 ## Open Source
 
 sisakulint-agent is open source software. You can review our code at:
-- [https://github.com/sisaku-security/sisakulint-agent](https://github.com/sisaku-security/sisakulint-agent)
+- [https://github.com/ultra-supara/sisakulint-agent](https://github.com/ultra-supara/sisakulint-agent)
