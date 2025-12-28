@@ -1,12 +1,12 @@
 +++
 title = 'Terms of Service'
-date = 2024-12-28
+date = 2025-12-28
 weight = 2
 +++
 
 # Terms of Service
 
-**Last Updated: December 28, 2024**
+**Last Updated: December 28, 2025**
 
 Please read these Terms of Service ("Terms") carefully before using sisakulint-agent ("the Service").
 
@@ -24,7 +24,7 @@ sisakulint-agent is a GitHub App that provides:
 
 ## License
 
-sisakulint-agent is open source software released under the ISC License. The source code is available at [https://github.com/sisaku-security/sisakulint-agent](https://github.com/sisaku-security/sisakulint-agent).
+sisakulint is open source. See the [LICENSE file](https://github.com/ultra-supara/sisakulint/blob/main/LICENSE) for details.
 
 ## Use of Service
 
@@ -96,4 +96,4 @@ For questions about these Terms, please:
 
 sisakulint-agent uses the following technologies:
 - [Probot](https://probot.github.io/) - GitHub App framework
-- [sisakulint](https://github.com/sisaku-security/sisakulint) - Static analysis engine
+- [sisakulint](https://github.com/ultra-supara/sisakulint) - Static analysis engine
