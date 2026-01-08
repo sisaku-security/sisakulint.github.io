@@ -1,34 +1,13 @@
 ---
-title: "Timeoutminutes Rule"
-weight: 1
-# bookFlatSection: false
-# bookToc: true
-# bookHidden: false
-# bookCollapseSection: false
-# bookComments: false
-# bookSearchExclude: false
+title: "Timeout Minutes Rule"
+weight: 5
 ---
 
-### Rule Overview: Timeout Minutes Rule
+### Timeout Minutes Rule Overview
 
-This rule is designed to analyze YAML configuration files for GitHub Actions workflows, specifically focusing on the absence of the `timeout-minutes` attribute for jobs. It aims to enhance workflow reliability and prevent potential issues caused by long-running jobs. The rule identifies errors in the following cases:
+This rule enforces the `timeout-minutes` attribute for all jobs in GitHub Actions workflows. Without explicit timeouts, jobs can run indefinitely, consuming CI/CD resources and potentially being exploited for malicious purposes.
 
-#### Missing Timeout Minutes for Jobs:
-
-- Checks for the presence of the `timeout-minutes` attribute in each job definition within the workflow.
-- Triggers an error if a job is found without a specified timeout, as this can lead to jobs running indefinitely and consuming resources unnecessarily. Setting a timeout helps to ensure that jobs are terminated after a reasonable period, preventing resource exhaustion.
-
-#### Importance of Timeout Minutes:
-
-- Encourages the specification of timeout values for all jobs to maintain control over execution time and resource usage.
-- Helps to avoid situations where a job may hang or take longer than expected, which can disrupt the overall workflow and lead to delays in CI/CD processes.
-
-#### Security Implications:
-
-- By enforcing timeout limits, this rule indirectly contributes to security by mitigating the risk of GitHub Actions being exploited through long-running jobs (e.g., in a potential C2 attack scenario). 
-- Limiting job execution time can help prevent unauthorized access or resource abuse, ensuring that workflows remain efficient and secure.
-
-The test sample [sisakulint yaml file on GitHub!](https://github.com/ultra-supara/sisakulint/.github/workflows/CI.yaml) file is below.
+**Invalid Example:**
 
 ```yaml
 name: CI
@@ -38,53 +17,151 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    # Missing timeout-minutes
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
-        with:
-          go-version: "1.21.4"
-      - name: Check Go sources are formatted
-        run: |
-          diffs="$(gofmt -d ./pkg/core/*.go ./cmd/sisakulint/*.go)"
-          if [[ "$diffs" != "" ]]; then
-            echo "$diffs" >&2
-          fi
-      - name: Install staticcheck
-        run: |
-          go install honnef.co/go/tools/cmd/staticcheck@latest
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - uses: actions/checkout@v4
+      - run: npm run lint
 
   docker:
-    name: Dockerfile
+    name: Build Docker
     runs-on: ubuntu-latest
+    # Missing timeout-minutes
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - name: generatetoken
-        id: generate_token
-        uses: actions/create-github-app-token@5d869da34e18e7287c1daad50e0b8ea0f506ce69 # v1.11.0
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-      - name: Build image
-        id: image
-        uses: docker/build-push-action@5cd11c3a4ced054e52742c5fd54dca954e0edd85 # v6.7.0
-        with:
-          build-args: |
-            GOLANG_VER=1.21.4
-            "TOKEN=${{ steps.generate_token.outputs.token }}"
-          push: false
+      - uses: actions/checkout@v4
+      - run: docker build .
 ```
 
-result
+**Detection Output:**
 
 ```bash
 CI.yaml:5:3: timeout-minutes is not set for job lint; see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes for more details. [missing-timeout-minutes]
       5 👈|  lint:
-        
-CI.yaml:24:3: timeout-minutes is not set for job docker; see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes for more details. [missing-timeout-minutes]
-       24 👈|  docker:
+
+CI.yaml:13:3: timeout-minutes is not set for job docker; see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes for more details. [missing-timeout-minutes]
+      13 👈|  docker:
 ```
 
-####  General Best Practices:
-- Recommends setting appropriate timeout values based on the expected duration of jobs, taking into account the complexity and resource requirements of the tasks being performed.
-- Raises awareness about the importance of managing job execution times in CI/CD pipelines, promoting adherence to best practices in workflow management and security.
+### Rule Background
+
+#### Why Timeout Configuration Matters
+
+Jobs without explicit timeouts pose several risks:
+
+1. **Resource Exhaustion**: Long-running jobs consume compute minutes and can exhaust CI/CD quotas
+2. **Denial of Service**: Malicious PRs could intentionally create infinite loops
+3. **C2 Attack Vector**: Compromised workflows could be used as command-and-control infrastructure
+4. **Cost Overruns**: Billable minutes accumulate when jobs hang indefinitely
+5. **Developer Friction**: Stuck jobs block CI/CD pipelines and delay releases
+
+#### Default Behavior
+
+GitHub Actions has a default timeout of **360 minutes (6 hours)** per job. This is often excessive for most workflows and should be explicitly reduced.
+
+### Auto-Fix Support
+
+The timeout-minutes rule supports auto-fixing by adding a default timeout:
+
+```bash
+# Preview changes without applying
+sisakulint -fix dry-run
+
+# Apply fixes
+sisakulint -fix on
+```
+
+**Before (Missing Timeout):**
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run build
+```
+
+**After Auto-Fix:**
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5  # Added by sisakulint
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run build
+```
+
+**Note:** The auto-fix adds a default timeout of 5 minutes. Review and adjust this value based on your job's actual requirements.
+
+### Valid Patterns
+
+#### Pattern 1: Simple Timeout
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm run build
+```
+
+#### Pattern 2: Different Timeouts per Job
+
+```yaml
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5  # Quick job
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30  # Longer job
+
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+```
+
+### Recommended Timeout Values
+
+| Job Type | Recommended Timeout |
+|----------|---------------------|
+| Linting | 5-10 minutes |
+| Unit Tests | 10-20 minutes |
+| Integration Tests | 20-45 minutes |
+| Build (Simple) | 10-15 minutes |
+| Build (Complex) | 20-30 minutes |
+| Docker Build | 15-30 minutes |
+| Deployment | 10-20 minutes |
+
+### Best Practices
+
+1. **Set Realistic Timeouts**: Choose timeouts based on typical job duration plus buffer
+2. **Different Timeouts for Different Jobs**: Match timeout to job complexity
+3. **Consider Matrix Jobs**: Matrix jobs may need longer timeouts
+4. **Self-Hosted Runners**: Self-hosted runners may need adjusted timeouts
+
+### Related Rules
+
+- **[permissions]({{< ref "permissions.md" >}})**: Limits job permissions
+- **[commit-sha]({{< ref "commitSHARule.md" >}})**: Pins actions for security
+
+### References
+
+- [GitHub Docs: timeout-minutes](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes)
+- [GitHub Docs: Usage Limits](https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration)
+
+{{< popup_link2 href="https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idtimeout-minutes" >}}
+
+{{< popup_link2 href="https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration" >}}
+
+### Configuration
+
+This rule is enabled by default. To disable it:
+
+```bash
+sisakulint -ignore missing-timeout-minutes
+```
+
+However, disabling this rule is **not recommended** as explicit timeouts are an important security and resource management practice.

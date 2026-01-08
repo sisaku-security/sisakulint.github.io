@@ -1,76 +1,175 @@
 ---
-title: "Workflowcall Rule"
-weight: 1
-# bookFlatSection: false
-# bookToc: true
-# bookHidden: false
-# bookCollapseSection: false
-# bookComments: false
-# bookSearchExclude: false
+title: "Workflow Call Rule"
+weight: 6
 ---
 
----
+### Workflow Call Rule Overview
 
-**Rule Overview:**
+This rule validates the syntax and configuration of reusable workflow calls in GitHub Actions. It detects common misconfigurations that can cause workflow failures or unexpected behavior when using the `uses:` keyword to call reusable workflows.
 
-This rule is designed to analyze GitHub Actions workflows for common misconfigurations when using reusable workflows. It focuses on ensuring that certain settings are correctly applied according to GitHub Actions standards, and it identifies errors in the following cases:
-
-1. **Validation of `runs-on` with Reusable Workflows**:
-   - Checks for improper use of the `runs-on` keyword when calling a reusable workflow using the `uses` keyword.
-   - Triggers an error if `runs-on` is specified when calling a reusable workflow since this is not supported. Instead, the reusable workflow should define its own `runs-on` internally.
-
-2. **Local File Paths with Refs**:
-   - Analyzes the use of `uses` with a reference (`@main`, `@v1`, etc.) pointing to a local workflow file path (e.g., `./.github/workflows/ci.yml@main`).
-   - Flags an error if a local workflow file path is specified with a version ref, as this is not allowed. Local workflows should not include version references.
-
-3. **Use of `with` for Reusable Workflows**:
-   - Checks for improper usage of the `with` field when calling reusable workflows.
-   - Raises an error if `with` is used outside of the proper context (e.g., in regular workflows instead of reusable ones). Parameters in the `with` block should only be used for inputs when calling reusable workflows correctly.
-
-This rule helps enforce proper usage of reusable workflows and GitHub Actions syntax, reducing potential configuration errors and ensuring workflows are set up according to best practices.
-
-The test sample `permissions.yaml` file is below.
+**Invalid Example:**
 
 ```yaml
 on: push
 jobs:
   job1:
     uses: ultra-supara/sisakulint/workflow.yml@v1
-    # ERROR: 'runs-on' is not available on calling reusable workflow
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Error: runs-on not allowed with uses
   job2:
-    # ERROR: Local file path with ref is not available
-    uses: ./.github/workflows/ci.yml@main
+    uses: ./.github/workflows/ci.yml@main  # Error: local path with ref
   job3:
-    # ERROR: 'with' is only available on calling reusable workflow
     with:
-      foo: bar
+      foo: bar  # Error: with without uses
     runs-on: ubuntu-latest
     steps:
       - run: echo hello
 ```
 
-results
+**Detection Output:**
 
 ```bash
 a.yaml:6:5: when a reusable workflow is called with "uses", "runs-on" is not available. only following keys are allowed: "name", "uses", "with", "secrets", "needs", "if", and "permissions" in job "job1" [syntax]
       6 👈|    runs-on: ubuntu-latest
-          
-a.yaml:6:14: one ${{ }} expression should be included in "runner label at \"runs-on\" section" value but got 0 expressions [expression]
-      6 👈|    runs-on: ubuntu-latest
-                   
+
 a.yaml:9:11: reusable workflow call "./.github/workflows/ci.yml@main" at uses is not following the format "owner/repo/path/to/workflow.yml@ref" nor "./path/to/workflow.yml". please visit to https://docs.github.com/en/actions/learn-github-actions/reusing-workflows for more details [workflow-call]
       9 👈|    uses: ./.github/workflows/ci.yml@main
-                
+
 a.yaml:12:5: "with" is only available for a reusable workflow call with "uses" but "uses" is not found in job "job3" [syntax]
        12 👈|    with:
-           
-a.yaml:14:14: one ${{ }} expression should be included in "runner label at \"runs-on\" section" value but got 0 expressions [expression]
-       14 👈|    runs-on: ubuntu-latest
 ```
 
-This rule helps enforce proper usage of reusable workflows and GitHub Actions syntax, reducing potential configuration errors and ensuring workflows are set up according to best practices.
+### Rule Background
 
-For more information, please refer to below.
+#### Why Workflow Call Validation Matters
 
-{{< popup_link2 href=https://docs.github.com/en/actions/sharing-automations/reusing-workflows >}}
+Reusable workflows are a powerful feature for sharing workflow logic across repositories. However, incorrect syntax can cause:
+
+1. **Workflow Parsing Failures**: GitHub Actions will reject invalid workflow configurations
+2. **Confusing Error Messages**: GitHub's error messages for workflow call issues can be unclear
+3. **Wasted CI Time**: Invalid workflows fail during execution rather than at parse time
+4. **Maintenance Issues**: Incorrect patterns may work temporarily but break on updates
+
+### What the Rule Checks
+
+1. **runs-on with Reusable Workflows**
+   - When `uses:` is specified, `runs-on:` is not allowed
+   - The called workflow defines its own runner
+
+2. **Local File Paths with Refs**
+   - Local paths (starting with `./`) cannot have version refs
+   - Valid: `./.github/workflows/ci.yml`
+   - Invalid: `./.github/workflows/ci.yml@main`
+
+3. **Orphaned with/secrets**
+   - `with:` and `secrets:` are only valid when calling reusable workflows
+   - They cannot be used with regular jobs that have `steps:`
+
+4. **Uses Format Validation**
+   - Remote: `owner/repo/path/to/workflow.yml@ref`
+   - Local: `./path/to/workflow.yml`
+
+### Valid Patterns
+
+#### Pattern 1: Remote Reusable Workflow
+
+```yaml
+jobs:
+  call-workflow:
+    uses: organization/repo/.github/workflows/build.yml@v1
+    with:
+      environment: production
+    secrets:
+      API_KEY: ${{ secrets.API_KEY }}
+```
+
+#### Pattern 2: Local Reusable Workflow
+
+```yaml
+jobs:
+  call-local:
+    uses: ./.github/workflows/shared-build.yml
+    with:
+      config: default
+```
+
+#### Pattern 3: With Permissions
+
+```yaml
+jobs:
+  call-workflow:
+    uses: owner/repo/.github/workflows/deploy.yml@main
+    permissions:
+      contents: read
+      deployments: write
+    with:
+      target: staging
+```
+
+#### Pattern 4: With Dependencies
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm run build
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      artifact: build-output
+```
+
+### Allowed Keys for Reusable Workflow Calls
+
+When calling a reusable workflow with `uses:`, only these keys are allowed:
+
+| Key | Description |
+|-----|-------------|
+| `name` | Display name for the job |
+| `uses` | Path to the reusable workflow |
+| `with` | Input parameters for the workflow |
+| `secrets` | Secrets to pass to the workflow |
+| `needs` | Job dependencies |
+| `if` | Conditional execution |
+| `permissions` | GITHUB_TOKEN permissions |
+
+**NOT allowed with reusable workflows:**
+- `runs-on` (defined in the reusable workflow)
+- `steps` (defined in the reusable workflow)
+- `container` (defined in the reusable workflow)
+- `services` (defined in the reusable workflow)
+- `env` (use `with:` instead)
+
+### Best Practices
+
+1. **Use Semantic Versioning for Remote Workflows**
+2. **Define Clear Inputs** in your reusable workflow
+3. **Use Explicit Secrets** (or `secrets: inherit`)
+4. **Document Workflow Requirements**
+
+### Related Rules
+
+- **[id]({{< ref "idRule.md" >}})**: Validates job and step IDs
+- **[permissions]({{< ref "permissions.md" >}})**: Validates permission configurations
+
+### References
+
+- [GitHub Docs: Reusing Workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows)
+- [GitHub Docs: workflow_call Event](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_call)
+- [GitHub Docs: Workflow Syntax for workflow_call](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_call)
+
+{{< popup_link2 href="https://docs.github.com/en/actions/using-workflows/reusing-workflows" >}}
+
+{{< popup_link2 href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_call" >}}
+
+### Configuration
+
+This rule is enabled by default. To disable it:
+
+```bash
+sisakulint -ignore workflow-call
+```
+
+However, disabling this rule is **not recommended** as invalid workflow calls will cause failures on GitHub Actions.
