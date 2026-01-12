@@ -33,10 +33,6 @@ GitHub Actions has become the de facto standard for CI/CD in open source project
 
 These vulnerabilities are frequently exploited in real-world attacks, making automated security scanning essential.
 
-### How sisakulint Differs from Other Tools
-
-<!-- TODO: Add comparison table with actionlint and other tools -->
-
 ### Key Capabilities
 
 - Static analysis with OWASP Top 10 CI/CD Security Risks compliance
@@ -60,10 +56,19 @@ These vulnerabilities are frequently exploited in real-world attacks, making aut
 - **[code-injection-medium]({{< ref "docs/rules/codeinjectionmedium.md" >}})** - Detects code injection in normal triggers
 - **[envvar-injection-critical]({{< ref "docs/rules/envvarinjectioncritical.md" >}})** - Environment variable injection in privileged triggers
 - **[envvar-injection-medium]({{< ref "docs/rules/envvarinjectionmedium.md" >}})** - Environment variable injection in normal triggers
+- **[envpath-injection-critical]({{< ref "docs/rules/envpathinjectioncritical.md" >}})** - PATH injection in privileged triggers
+- **[envpath-injection-medium]({{< ref "docs/rules/envpathinjectionmedium.md" >}})** - PATH injection in normal triggers
 - **[artifact-poisoning-critical]({{< ref "docs/rules/artifactpoisoningcritical.md" >}})** - Artifact poisoning detection (critical)
 - **[artifact-poisoning-medium]({{< ref "docs/rules/artifactpoisoningmedium.md" >}})** - Artifact poisoning detection (medium)
 - **[cache-poisoning rule]({{< ref "docs/rules/cachepoisoningrule.md" >}})** - Cache poisoning vulnerability detection
 - **[cache-poisoning-poisonable-step]({{< ref "docs/rules/cachepoisoningpoisonablesteprule.md" >}})** - Poisonable step detection after unsafe checkout
+- **[conditional rule]({{< ref "docs/rules/conditionalrule.md" >}})** - Validates conditional expressions
+- **[deprecated-commands rule]({{< ref "docs/rules/deprecatedcommandsrule.md" >}})** - Detects deprecated workflow commands
+- **[environment-variable rule]({{< ref "docs/rules/environmentvariablerule.md" >}})** - Environment variable name validation
+- **[expression rule]({{< ref "docs/rules/expressionrule.md" >}})** - GitHub Actions expression syntax validation
+- **[improper-access-control rule]({{< ref "docs/rules/improperaccesscontrol.md" >}})** - Detects label-based approval bypass vulnerabilities
+- **[job-needs rule]({{< ref "docs/rules/jobneeds.md" >}})** - Job dependency validation
+- **[secret-exposure rule]({{< ref "docs/rules/secretexposure.md" >}})** - Excessive secrets exposure detection
 
 ## Install
 
@@ -108,8 +113,8 @@ sisakulint implements detection rules aligned with the [OWASP Top 10 CI/CD Secur
 
 | OWASP Risk | Description | sisakulint Rules |
 |------------|-------------|------------------|
-| **CICD-SEC-02** | Inadequate Identity and Access Management | [permissions]({{< ref "docs/rules/permissions.md" >}}) |
-| **CICD-SEC-04** | Poisoned Pipeline Execution (PPE) | [code-injection-critical]({{< ref "docs/rules/codeinjectioncritical.md" >}}), [code-injection-medium]({{< ref "docs/rules/codeinjectionmedium.md" >}}), [envvar-injection-critical]({{< ref "docs/rules/envvarinjectioncritical.md" >}}), [envvar-injection-medium]({{< ref "docs/rules/envvarinjectionmedium.md" >}}), [untrusted-checkout]({{< ref "docs/rules/untrustedcheckout.md" >}}) |
+| **CICD-SEC-02** | Inadequate Identity and Access Management | [permissions]({{< ref "docs/rules/permissions.md" >}}), [secret-exposure]({{< ref "docs/rules/secretexposure.md" >}}) |
+| **CICD-SEC-04** | Poisoned Pipeline Execution (PPE) | [code-injection-critical]({{< ref "docs/rules/codeinjectioncritical.md" >}}), [code-injection-medium]({{< ref "docs/rules/codeinjectionmedium.md" >}}), [envvar-injection-critical]({{< ref "docs/rules/envvarinjectioncritical.md" >}}), [envvar-injection-medium]({{< ref "docs/rules/envvarinjectionmedium.md" >}}), [envpath-injection-critical]({{< ref "docs/rules/envpathinjectioncritical.md" >}}), [envpath-injection-medium]({{< ref "docs/rules/envpathinjectionmedium.md" >}}), [untrusted-checkout]({{< ref "docs/rules/untrustedcheckout.md" >}}), [improper-access-control]({{< ref "docs/rules/improperaccesscontrol.md" >}}) |
 | **CICD-SEC-06** | Insufficient Credential Hygiene | [credentials]({{< ref "docs/rules/CredentialsRule.md" >}}) |
 | **CICD-SEC-08** | Ungoverned Usage of 3rd Party Services | [action-list]({{< ref "docs/rules/actionlist.md" >}}), [commit-sha]({{< ref "docs/rules/commitSHARule.md" >}}) |
 | **CICD-SEC-09** | Improper Artifact Integrity Validation | [artifact-poisoning-critical]({{< ref "docs/rules/artifactpoisoningcritical.md" >}}), [artifact-poisoning-medium]({{< ref "docs/rules/artifactpoisoningmedium.md" >}}), [cache-poisoning]({{< ref "docs/rules/cachepoisoningrule.md" >}}), [cache-poisoning-poisonable-step]({{< ref "docs/rules/cachepoisoningpoisonablesteprule.md" >}}) |
