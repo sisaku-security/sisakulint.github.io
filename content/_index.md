@@ -45,7 +45,7 @@ These vulnerabilities are frequently exploited in real-world attacks, making aut
 ## Main Tool Features
 
 - **[id rule]({{< ref "docs/rules/idRule.md" >}})** - ID collision detection for jobs and environment variables
-- **[credentials rule]({{< ref "docs/rules/CredentialsRule.md" >}})** - Hardcoded credentials detection using Rego
+- **[credentials rule]({{< ref "docs/rules/credentialrules.md" >}})** - Hardcoded credentials detection using Rego
 - **[commit-sha rule]({{< ref "docs/rules/commitSHARule.md" >}})** - Validates commit SHA usage in actions
 - **[permissions rule]({{< ref "docs/rules/permissions.md" >}})** - Permission scope and value validation
 - **[workflow-call rule]({{< ref "docs/rules/workflowcall.md" >}})** - Reusable workflow call validation
@@ -115,7 +115,7 @@ sisakulint implements detection rules aligned with the [OWASP Top 10 CI/CD Secur
 |------------|-------------|------------------|
 | **CICD-SEC-02** | Inadequate Identity and Access Management | [permissions]({{< ref "docs/rules/permissions.md" >}}), [secret-exposure]({{< ref "docs/rules/secretexposure.md" >}}) |
 | **CICD-SEC-04** | Poisoned Pipeline Execution (PPE) | [code-injection-critical]({{< ref "docs/rules/codeinjectioncritical.md" >}}), [code-injection-medium]({{< ref "docs/rules/codeinjectionmedium.md" >}}), [envvar-injection-critical]({{< ref "docs/rules/envvarinjectioncritical.md" >}}), [envvar-injection-medium]({{< ref "docs/rules/envvarinjectionmedium.md" >}}), [envpath-injection-critical]({{< ref "docs/rules/envpathinjectioncritical.md" >}}), [envpath-injection-medium]({{< ref "docs/rules/envpathinjectionmedium.md" >}}), [untrusted-checkout]({{< ref "docs/rules/untrustedcheckout.md" >}}), [improper-access-control]({{< ref "docs/rules/improperaccesscontrol.md" >}}) |
-| **CICD-SEC-06** | Insufficient Credential Hygiene | [credentials]({{< ref "docs/rules/CredentialsRule.md" >}}) |
+| **CICD-SEC-06** | Insufficient Credential Hygiene | [credentials]({{< ref "docs/rules/credentialrules.md" >}}) |
 | **CICD-SEC-08** | Ungoverned Usage of 3rd Party Services | [action-list]({{< ref "docs/rules/actionlist.md" >}}), [commit-sha]({{< ref "docs/rules/commitSHARule.md" >}}) |
 | **CICD-SEC-09** | Improper Artifact Integrity Validation | [artifact-poisoning-critical]({{< ref "docs/rules/artifactpoisoningcritical.md" >}}), [artifact-poisoning-medium]({{< ref "docs/rules/artifactpoisoningmedium.md" >}}), [cache-poisoning]({{< ref "docs/rules/cachepoisoningrule.md" >}}), [cache-poisoning-poisonable-step]({{< ref "docs/rules/cachepoisoningpoisonablesteprule.md" >}}) |
 
