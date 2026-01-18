@@ -120,10 +120,15 @@ The following rules support automatic fixing with `sisakulint -fix on`:
 
 ## OWASP CI/CD Top 10 Mapping
 
-| OWASP Risk | sisakulint Rules |
-|------------|------------------|
-| CICD-SEC-02 | permissions, secret-exposure, unmasked-secret-exposure |
-| CICD-SEC-04 | code-injection-*, envvar-injection-*, envpath-injection-*, untrusted-checkout-*, improper-access-control, bot-conditions, unsound-contains |
-| CICD-SEC-06 | credentials |
-| CICD-SEC-08 | action-list, commit-sha, known-vulnerable-actions, archived-uses, impostor-commit, ref-confusion, unpinned-images |
-| CICD-SEC-09 | artifact-poisoning-*, cache-poisoning-*, artipacked |
+| OWASP Risk | Description | sisakulint Rules |
+|------------|-------------|------------------|
+| CICD-SEC-01 | Insufficient Flow Control Mechanisms | improper-access-control, bot-conditions |
+| CICD-SEC-02 | Inadequate Identity and Access Management | permissions, secret-exposure, unmasked-secret-exposure |
+| CICD-SEC-03 | Dependency Chain Abuse | known-vulnerable-actions, archived-uses, impostor-commit, ref-confusion |
+| CICD-SEC-04 | Poisoned Pipeline Execution (PPE) | code-injection-*, envvar-injection-*, envpath-injection-*, untrusted-checkout-*, unsound-contains |
+| CICD-SEC-05 | Insufficient PBAC (Pipeline-Based Access Controls) | self-hosted-runners |
+| CICD-SEC-06 | Insufficient Credential Hygiene | credentials |
+| CICD-SEC-07 | Insecure System Configuration | timeout-minutes, deprecated-commands |
+| CICD-SEC-08 | Ungoverned Usage of 3rd Party Services | action-list, commit-sha, unpinned-images |
+| CICD-SEC-09 | Improper Artifact Integrity Validation | artifact-poisoning-*, cache-poisoning-*, artipacked |
+| CICD-SEC-10 | Insufficient Logging and Visibility | obfuscation |
