@@ -124,16 +124,16 @@ $ sisakulint -format "{{sarif .}}"
 
 | OWASP Risk | Description | sisakulint Rules |
 |------------|-------------|------------------|
-| CICD-SEC-01 | Insufficient Flow Control Mechanisms | improper-access-control, bot-conditions |
-| CICD-SEC-02 | Inadequate Identity and Access Management | permissions, secret-exposure, unmasked-secret-exposure |
-| CICD-SEC-03 | Dependency Chain Abuse | known-vulnerable-actions, archived-uses, impostor-commit, ref-confusion |
-| CICD-SEC-04 | Poisoned Pipeline Execution (PPE) | code-injection-*, envvar-injection-*, envpath-injection-*, untrusted-checkout-*, unsound-contains |
+| CICD-SEC-01 | Insufficient Flow Control Mechanisms | timeout-minutes, dangerous-triggers-*, self-hosted-runners |
+| CICD-SEC-02 | Inadequate Identity and Access Management | permissions, secret-exposure, unmasked-secret-exposure, bot-conditions |
+| CICD-SEC-03 | Dependency Chain Abuse | known-vulnerable-actions, archived-uses, impostor-commit, ref-confusion, unpinned-images |
+| CICD-SEC-04 | Poisoned Pipeline Execution (PPE) | code-injection-*, envvar-injection-*, envpath-injection-*, untrusted-checkout-*, unsound-contains, improper-access-control, deprecated-commands, obfuscation, reusable-workflow-taint, output-clobbering, argument-injection, request-forgery, impostor-commit, artifact-poisoning-*, cache-poisoning-* |
 | CICD-SEC-05 | Insufficient PBAC (Pipeline-Based Access Controls) | self-hosted-runners |
-| CICD-SEC-06 | Insufficient Credential Hygiene | credentials |
-| CICD-SEC-07 | Insecure System Configuration | timeout-minutes, deprecated-commands |
-| CICD-SEC-08 | Ungoverned Usage of 3rd Party Services | action-list, commit-sha, unpinned-images |
-| CICD-SEC-09 | Improper Artifact Integrity Validation | artifact-poisoning-*, cache-poisoning-*, artipacked |
-| CICD-SEC-10 | Insufficient Logging and Visibility | obfuscation |
+| CICD-SEC-06 | Insufficient Credential Hygiene | credentials, artipacked, secret-exfiltration, secrets-in-artifacts, secrets-inherit |
+| CICD-SEC-07 | Insecure System Configuration | self-hosted-runners, id, conditional, expression, job-needs, environment-variable, cache-bloat |
+| CICD-SEC-08 | Ungoverned Usage of 3rd Party Services | action-list, commit-sha, workflow-call |
+| CICD-SEC-09 | Improper Artifact Integrity Validation | artifact-poisoning-*, cache-poisoning-*, artipacked, secrets-in-artifacts |
+| CICD-SEC-10 | Insufficient Logging and Visibility | - |
 
 {{< popup_link2 href="https://owasp.org/www-project-top-10-ci-cd-security-risks/" >}}
 
