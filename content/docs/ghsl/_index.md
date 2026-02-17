@@ -1,0 +1,131 @@
+---
+title: "GHSL Advisories"
+weight: 30
+bookCollapseSection: true
+---
+
+# GitHub Security Lab (GHSL) Vulnerability Detection
+
+This document summarizes sisakulint's detection capability against GitHub Security Lab advisories for the GitHub Actions ecosystem.
+
+## Summary
+
+| Metric | Value |
+|--------|-------|
+| Total Advisories | 18 |
+| Detected (Direct) | 18 |
+| Detection Rate | 100% |
+
+## Detection Categories
+
+| Rule | Detections |
+|------|----------:|
+| code-injection-critical | 13 |
+| untrusted-checkout | 7 |
+| cache-poisoning-poisonable-step | 6 |
+| dangerous-triggers-critical | 2 |
+| argument-injection-critical | 1 |
+| output-clobbering-critical | 1 |
+
+## Detection Results
+
+### Code Injection Vulnerabilities
+
+| Advisory ID | Affected Component | Severity | Detected | Detection Rules |
+|-------------|-------------------|----------|----------|-----------------|
+| [GHSL-2024-326]({{< ref "GHSL-2024-326.md" >}}) | Actual | Critical | Yes | CodeInjectionCriticalRule, ArgumentInjectionCriticalRule |
+| [GHSL-2025-087]({{< ref "GHSL-2025-087.md" >}}) | PX4-Autopilot | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-089]({{< ref "GHSL-2025-089.md" >}}) | YDB | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-090]({{< ref "GHSL-2025-090.md" >}}) | harvester | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-091]({{< ref "GHSL-2025-091.md" >}}) | pymapdl | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-099]({{< ref "GHSL-2025-099.md" >}}) | cross-platform-actions | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-101]({{< ref "GHSL-2025-101.md" >}}) | homeassistant-tapo-control | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-102]({{< ref "GHSL-2025-102.md" >}}) | acl-anthology | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-103]({{< ref "GHSL-2025-103.md" >}}) | acl-anthology | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-104]({{< ref "GHSL-2025-104.md" >}}) | weaviate | Critical | Yes | CodeInjectionCriticalRule, DangerousTriggersRule |
+| [GHSL-2025-105]({{< ref "GHSL-2025-105.md" >}}) | vets-api | Critical | Yes | CodeInjectionCriticalRule, OutputClobberingCriticalRule |
+| [GHSL-2025-106]({{< ref "GHSL-2025-106.md" >}}) | esphome-docs | Critical | Yes | CodeInjectionCriticalRule |
+| [GHSL-2025-111]({{< ref "GHSL-2025-111.md" >}}) | nrwl/nx | High | Yes | UntrustedCheckoutRule, CodeInjectionCriticalRule |
+
+### Untrusted Code Execution Vulnerabilities
+
+| Advisory ID | Affected Component | Severity | Detected | Detection Rules |
+|-------------|-------------------|----------|----------|-----------------|
+| [GHSL-2024-325]({{< ref "GHSL-2024-325.md" >}}) | Actual | Critical | Yes | CachePoisoningPoisonableStepRule, DangerousTriggersRule |
+| [GHSL-2025-006]({{< ref "GHSL-2025-006.md" >}}) | homeassistant-powercalc | Critical | Yes | UntrustedCheckoutRule, CachePoisoningPoisonableStepRule |
+| [GHSL-2025-077]({{< ref "GHSL-2025-077.md" >}}) | beeware | Critical | Yes | UntrustedCheckoutRule, CachePoisoningPoisonableStepRule |
+| [GHSL-2025-082]({{< ref "GHSL-2025-082.md" >}}) | ag-grid | Critical | Yes | UntrustedCheckoutRule, CachePoisoningPoisonableStepRule |
+| [GHSL-2025-084]({{< ref "GHSL-2025-084.md" >}}) | datadog-actions-metrics | Critical | Yes | UntrustedCheckoutRule |
+| [GHSL-2025-094]({{< ref "GHSL-2025-094.md" >}}) | faststream | Critical | Yes | UntrustedCheckoutRule, CachePoisoningPoisonableStepRule |
+
+### TOCTOU / Approval Bypass Vulnerabilities
+
+| Advisory ID | Affected Component | Severity | Detected | Detection Rules |
+|-------------|-------------------|----------|----------|-----------------|
+| [GHSL-2025-038]({{< ref "GHSL-2025-038.md" >}}) | github/branch-deploy | High | Yes | CachePoisoningPoisonableStepRule |
+
+## Key Findings
+
+1. **100% Detection Rate**: sisakulint successfully detects all 18 GHSL advisories for GitHub Actions workflows.
+
+2. **Code Injection Dominance**: 13 of 18 advisories (72%) involve code injection vulnerabilities via untrusted input in shell commands.
+
+3. **Untrusted Checkout Patterns**: 7 advisories involve checking out untrusted PR code in privileged contexts.
+
+4. **Cache/Supply Chain Risks**: 6 advisories involve cache poisoning or supply chain attack vectors.
+
+5. **Privileged Trigger Exploitation**: All advisories exploit privileged triggers (`pull_request_target`, `issue_comment`, `workflow_run`).
+
+## Core Detection Rules
+
+| Rule | Description | Auto-fix |
+|------|-------------|----------|
+| `code-injection-critical` | Detects untrusted input in shell commands | Yes |
+| `argument-injection-critical` | Detects untrusted input in command arguments | Yes |
+| `dangerous-triggers-critical` | Identifies privileged triggers without mitigations | No |
+| `cache-poisoning-poisonable-step` | Detects execution of untrusted code after checkout | Yes |
+| `untrusted-checkout` | Detects checkout of PR code in privileged contexts | Yes |
+| `output-clobbering-critical` | Detects untrusted input written to GITHUB_OUTPUT | Yes |
+
+## Taint Tracking
+
+sisakulint implements sophisticated taint tracking to detect indirect code injection:
+
+1. **Direct Context Tracking**: Identifies untrusted GitHub context variables
+2. **Action Output Tracking**: Tracks taint through known actions (e.g., `xt0rted/pull-request-comment-branch`)
+3. **Step Output Propagation**: Follows taint through `actions/github-script` outputs
+
+## Common Vulnerability Patterns
+
+### Privileged Triggers
+
+These triggers grant elevated permissions and are prime targets for attacks:
+
+| Trigger | Risk | Reason |
+|---------|------|--------|
+| `issue_comment` | Critical | Triggered by anyone who can comment |
+| `pull_request_target` | Critical | Runs with target repo permissions on PR from fork |
+| `workflow_run` | Critical | Inherits elevated permissions from triggering workflow |
+
+### Untrusted Inputs
+
+Common untrusted inputs that can be exploited:
+
+```
+github.event.pull_request.head.ref
+github.event.pull_request.title
+github.event.pull_request.body
+github.event.issue.title
+github.event.issue.body
+github.event.comment.body
+github.event.workflow_run.head_branch
+github.event.workflow_run.head_repository.full_name
+steps.*.outputs.* (from tainted actions)
+```
+
+## References
+
+- [GitHub Security Lab Advisories](https://securitylab.github.com/advisories/)
+- [Keeping your GitHub Actions and workflows secure](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/)
+- [OWASP CI/CD Top 10 Security Risks](https://owasp.org/www-project-top-10-ci-cd-security-risks/)
+- [GitHub Actions Security Hardening](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions)

@@ -82,6 +82,15 @@ These vulnerabilities are frequently exploited in real-world attacks, making aut
 - **[obfuscation rule]({{< ref "docs/rules/obfuscation.md" >}})** - Detects obfuscated code in workflows
 - **[untrusted-checkout-to-ctou-critical]({{< ref "docs/rules/untrustedcheckouttoctoucritical.md" >}})** - Critical TOCTOU vulnerabilities in checkout
 - **[untrusted-checkout-to-ctou-high]({{< ref "docs/rules/untrustedcheckouttoctouhigh.md" >}})** - High severity TOCTOU vulnerabilities in checkout
+- **[output-clobbering rule]({{< ref "docs/rules/outputclobbering.md" >}})** - Detects output clobbering vulnerabilities via $GITHUB_OUTPUT
+- **[argument-injection rule]({{< ref "docs/rules/argumentinjection.md" >}})** - Detects command-line argument injection
+- **[secrets-in-artifacts rule]({{< ref "docs/rules/secretsinartifacts.md" >}})** - Detects sensitive data in artifact uploads
+- **[secrets-inherit rule]({{< ref "docs/rules/secretsinherit.md" >}})** - Detects excessive secrets inheritance
+- **[secret-exfiltration rule]({{< ref "docs/rules/secretexfiltration.md" >}})** - Detects secret exfiltration via network commands
+- **[reusable-workflow-taint rule]({{< ref "docs/rules/reusableworkflowtaint.md" >}})** - Detects untrusted inputs in reusable workflows
+- **[dangerous-triggers-critical rule]({{< ref "docs/rules/dangeroustriggersrulecritical.md" >}})** - Detects privileged triggers without mitigations
+- **[dangerous-triggers-medium rule]({{< ref "docs/rules/dangeroustriggersrulemedium.md" >}})** - Detects privileged triggers with partial mitigations
+- **[request-forgery rule]({{< ref "docs/rules/requestforgery.md" >}})** - Detects SSRF vulnerabilities in workflows
 
 ## Install
 

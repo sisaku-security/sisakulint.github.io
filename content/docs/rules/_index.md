@@ -6,7 +6,18 @@ bookCollapseSection: true
 
 # sisakulint Rules
 
-sisakulint provides comprehensive security rules for GitHub Actions workflows. Rules are categorized by the security risks they address.
+sisakulint provides comprehensive security rules for GitHub Actions workflows. Rules are categorized by severity and the security risks they address.
+
+## Severity Summary
+
+sisakulint categorizes security rules by severity based on CVSS scores, attack impact, and exploitability.
+
+| Severity | Count | CVSS Range | Description |
+|----------|-------|------------|-------------|
+| **Critical** | 14 | 9.0-10.0 | Immediate risk, can lead to RCE or full compromise |
+| **High** | 17 | 7.0-8.9 | Significant risk, enables serious attacks |
+| **Medium** | 13 | 4.0-6.9 | Moderate risk, requires specific conditions |
+| **Low** | 5 | 0.1-3.9 | Best practices, minimal direct security impact |
 
 ## Security Rules Overview
 
